@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <time.h>
 
 #include "microtar.h"
 
@@ -329,14 +330,16 @@ int mtar_write_header(mtar_t *tar, const mtar_header_t *h) {
 }
 
 
-int mtar_write_file_header(mtar_t *tar, const char *name, unsigned size) {
+int mtar_write_file_header(mtar_t *tar, const char *name, unsigned size, unsigned int timestamp) {
   mtar_header_t h;
   /* Build header */
   memset(&h, 0, sizeof(h));
   strcpy(h.name, name);
   h.size = size;
   h.type = MTAR_TREG;
-  h.mode = 0664;
+  // Daniel: We need to set the timestamp for the files and permission
+  h.mode = 0755;
+  h.mtime = timestamp;
   /* Write header */
   return mtar_write_header(tar, &h);
 }
